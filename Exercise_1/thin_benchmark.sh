@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=thin_bench
 #SBATCH -A dssc
-#SBATCH --partition=THIN         
+#SBATCH --partition=THIN
 #SBATCH --nodes=2
 #SBATCH --ntasks-per-node=12  # Full THIN node (2×12 cores)
 #SBATCH --time=02:00:00
@@ -14,7 +14,7 @@ module load openMPI/4.1.6/gnu/14.2.1
 CSV_OUT="HPC_Final/Exercise_1/thin_result.csv"
 echo "Type,Algorithm,NP,Size,Avg_Latency,Min_Latency,Max_Latency,Iterations" > "${CSV_OUT}"
 
-# Broadcast Benchmark
+# Broadcast Operation
 for NP in {2..24}; do
   for ALG in 1 2 3 5; do  # 1: basic linear, 2: chain, 3: pipeline, 5: binary tree
     echo "Running Broadcast: NP=${NP}, ALG=${ALG}"
@@ -28,7 +28,7 @@ for NP in {2..24}; do
   done
 done
 
-# Reduce Benchmark
+# Reduce Operation
 for NP in {2..24}; do
   for ALG in 1 2 3 4; do  # 1: linear, 2: chain, 3: pipeline, 4: binary
     echo "Running Reduce: NP=${NP}, ALG=${ALG}"
