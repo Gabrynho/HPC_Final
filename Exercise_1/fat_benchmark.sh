@@ -1,24 +1,25 @@
 #!/bin/bash
-#SBATCH --job-name=thin_bench
+#SBATCH --job-name=fat_bench
 #SBATCH -A dssc
-#SBATCH --partition=THIN         
+#SBATCH --partition=THIN
 #SBATCH --nodes=2
-#SBATCH --ntasks-per-node=12  # Full THIN node (2×12 cores)
+#SBATCH --nodelist=fat_001,fat_002
+#SBATCH --ntasks-per-node=18  # Full FAT node (2×18 cores)
 #SBATCH --time=02:00:00
-#SBATCH --output=thin_bench_%j.out
+#SBATCH --output=fat_bench_%j.out
 #SBATCH --exclusive
 
 module load openMPI/4.1.6/gnu/14.2.1
 
 # Set the CSV output file and write header line
-CSV_OUT="HPC_Final/Exercise_1/thin_result.csv"
+CSV_OUT="HPC_Final/Exercise_1/fat_results.csv"
 echo "Type,Algorithm,NP,Size,Avg_Latency,Min_Latency,Max_Latency,Iterations" > "${CSV_OUT}"
 
 # Broadcast Benchmark
-for NP in {2..24}; do
+for NP in {2..36}; do
   for ALG in 1 2 3 5; do  # 1: basic linear, 2: chain, 3: pipeline, 5: binary tree
     echo "Running Broadcast: NP=${NP}, ALG=${ALG}"
-    result=$(mpirun --map-by core -n "${NP}" \
+    result=$(mpirun --map-by numa -n "${NP}" \
       --mca coll_tuned_use_dynamic_rules true \
       --mca coll_tuned_bcast_algorithm "${ALG}" \
       osu-micro-benchmarks-7.5/c/mpi/collective/blocking/osu_bcast -i 1000 -x 100 -f)
@@ -29,10 +30,10 @@ for NP in {2..24}; do
 done
 
 # Reduce Benchmark
-for NP in {2..24}; do
+for NP in {2..36}; do
   for ALG in 1 2 3 4; do  # 1: linear, 2: chain, 3: pipeline, 4: binary
     echo "Running Reduce: NP=${NP}, ALG=${ALG}"
-    result=$(mpirun --map-by core -n "${NP}" \
+    result=$(mpirun --map-by numa -n "${NP}" \
       --mca coll_tuned_use_dynamic_rules true \
       --mca coll_tuned_reduce_algorithm "${ALG}" \
       osu-micro-benchmarks-7.5/c/mpi/collective/blocking/osu_allreduce -i 1000 -x 100 -f)
