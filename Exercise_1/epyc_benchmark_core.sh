@@ -17,14 +17,12 @@ fi
 
 OPERATION=$1
 
-# Set the CSV output file and write header line
-CSV_OUT="HPC_Final/Exercise_1/epyc_core_result.csv"
-echo "Type,Algorithm,NP,Size,Avg_Latency,Min_Latency,Max_Latency,Iterations" > "${CSV_OUT}"
-
 if [ "$OPERATION" == "broadcast" ]; then
+  CSV_OUT="HPC_Final/Exercise_1/epyc_core_result_broadcast.csv"
+  echo "Type,Algorithm,NP,Size,Avg_Latency,Min_Latency,Max_Latency,Iterations" > "${CSV_OUT}"
   echo "Running Broadcast tests..."
-  # Broadcast Operation: NP from 2 to 256, stepping by 2
-  for NP in $(seq 2 2 256); do
+  # Broadcast Operation: NP from 2 to 256, stepping by 4
+  for NP in $(seq 2 4 256); do
     for ALG in 1 2 3 5; do  # 1: basic linear, 2: chain, 3: pipeline, 5: binary tree
       echo "Running Broadcast: NP=${NP}, ALG=${ALG}"
       result=$(mpirun --map-by core -n "${NP}" \
@@ -37,8 +35,10 @@ if [ "$OPERATION" == "broadcast" ]; then
   done
 
 elif [ "$OPERATION" == "reduce" ]; then
+  CSV_OUT="HPC_Final/Exercise_1/epyc_core_result_reduce.csv"
+  echo "Type,Algorithm,NP,Size,Avg_Latency,Min_Latency,Max_Latency,Iterations" > "${CSV_OUT}"
   echo "Running Reduce tests..."
-  # Reduce Operation: NP from 2 to 256, stepping by 2
+  # Reduce Operation: NP from 2 to 256, stepping by 4
   for NP in $(seq 2 2 256); do
     for ALG in 1 2 3 4; do  # 1: linear, 2: chain, 3: pipeline, 4: binary
       echo "Running Reduce: NP=${NP}, ALG=${ALG}"
