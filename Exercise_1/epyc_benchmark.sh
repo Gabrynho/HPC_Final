@@ -11,11 +11,11 @@
 module load openMPI/4.1.6/gnu/14.2.1
 
 # Set the CSV output file and write header line
-CSV_OUT="HPC_Final/Exercise_1/thin_result.csv"
+CSV_OUT="HPC_Final/Exercise_1/epyc_result.csv"
 echo "Type,Algorithm,NP,Size,Avg_Latency,Min_Latency,Max_Latency,Iterations" > "${CSV_OUT}"
 
 # Broadcast Operation
-for NP in {2..256}; do
+for NP in {2..8}; do
   for ALG in 1 2 3 5; do  # 1: basic linear, 2: chain, 3: pipeline, 5: binary tree
     echo "Running Broadcast: NP=${NP}, ALG=${ALG}"
     result=$(mpirun --map-by socket:PE=16 -n "${NP}" \
@@ -29,7 +29,7 @@ for NP in {2..256}; do
 done
 
 # Reduce Operation
-for NP in {2..256}; do
+for NP in {2..8}; do
   for ALG in 1 2 3 4; do  # 1: linear, 2: chain, 3: pipeline, 4: binary
     echo "Running Reduce: NP=${NP}, ALG=${ALG}"
     result=$(mpirun --map-by socket:PE=16 -n "${NP}" \

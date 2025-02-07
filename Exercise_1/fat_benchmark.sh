@@ -3,7 +3,7 @@
 #SBATCH -A dssc
 #SBATCH --partition=THIN
 #SBATCH --nodes=2
-#SBATCH --nodelist=fat_001,fat_002
+#SBATCH --nodelist=fat001,fat002
 #SBATCH --ntasks-per-node=18  # Full FAT node (2×18 cores)
 #SBATCH --time=02:00:00
 #SBATCH --output=fat_bench_%j.out
