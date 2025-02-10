@@ -12,14 +12,14 @@
 module load openMPI/4.1.6/gnu/14.2.1
 
 # Set the CSV output file and write header line
-CSV_OUT="HPC_Final/Exercise_1/fat_results.csv"
+CSV_OUT="HPC_Final/Exercise_1/fat_core_results.csv"
 echo "Type,Algorithm,NP,Size,Avg_Latency,Min_Latency,Max_Latency,Iterations" > "${CSV_OUT}"
 
 # Broadcast Operation
 for NP in {2..36}; do
   for ALG in 1 2 3 5; do  # 1: basic linear, 2: chain, 3: pipeline, 5: binary tree
     echo "Running Broadcast: NP=${NP}, ALG=${ALG}"
-    result=$(mpirun --map-by numa -n "${NP}" \
+    result=$(mpirun --map-by core -n "${NP}" \
       --mca coll_tuned_use_dynamic_rules true \
       --mca coll_tuned_bcast_algorithm "${ALG}" \
       osu-micro-benchmarks-7.5/c/mpi/collective/blocking/osu_bcast -i 1000 -x 100 -f)
@@ -33,7 +33,7 @@ done
 for NP in {2..36}; do
   for ALG in 1 2 3 4; do  # 1: linear, 2: chain, 3: pipeline, 4: binary
     echo "Running Reduce: NP=${NP}, ALG=${ALG}"
-    result=$(mpirun --map-by numa -n "${NP}" \
+    result=$(mpirun --map-by core -n "${NP}" \
       --mca coll_tuned_use_dynamic_rules true \
       --mca coll_tuned_reduce_algorithm "${ALG}" \
       osu-micro-benchmarks-7.5/c/mpi/collective/blocking/osu_allreduce -i 1000 -x 100 -f)
