@@ -3,7 +3,7 @@
 #SBATCH --job-name=epyc_pqrs
 #SBATCH -A dssc
 #SBATCH --partition=EPYC
-#SBATCH --nodes=2
+#SBATCH --nodes=1
 #SBATCH --ntasks-per-node=128 
 #SBATCH --time=02:00:00
 #SBATCH --output=epyc_pqrs_%j.out
@@ -17,7 +17,10 @@ DATA_SIZE=10000000
 mpicc -o parallel_quicksort parallel-quicksort-mpi/src/main.c parallel-quicksort-mpi/src/quicksort.c -lm
 for np in $(seq 2 2 256); do
   for i in {1..10}; do
-    mpirun -np $np ./parallel_quicksort ${DATA_SIZE}
+    if [ $i -eq 1 ]; then
+      mpirun -np $np ./parallel_quicksort ${DATA_SIZE} 1 timings_strong_scaling.csv
+    else
+      mpirun -np $np ./parallel_quicksort ${DATA_SIZE} 0 timings_strong_scaling.csv
+    fi
   done
 done
-

@@ -53,6 +53,13 @@ int main(int argc, char **argv) {
         if (argc > 2) {
             run_serial = atoi(argv[2]);  // nonzero means true.
         }
+        // Third argument: CSV filename (optional).
+        char *csv_filename = "timings.csv";  // default filename
+        if (rank == 0) {
+            if (argc > 3) {
+                csv_filename = argv[3];
+            }
+        }
     }
     // Broadcast data_size to all processes.
     MPI_Bcast(&data_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
