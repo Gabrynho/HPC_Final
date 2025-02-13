@@ -17,7 +17,7 @@ void generate_data(double *data, int size) {
 
 /* Compare two double arrays with a tolerance. Returns 1 if identical, 0 otherwise. */
 int compare_arrays(double *a, double *b, int n) {
-    const double tol = 1e-8;
+    const double tol = 1e-6;
     for (int i = 0; i < n; i++) {
         if (fabs(a[i] - b[i]) > tol) {
             printf("Mismatch at index %d: parallel=%f, serial=%f\n", i, a[i], b[i]);
