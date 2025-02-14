@@ -20,7 +20,7 @@ DATA_SIZE_PER_PROC=1000000
 mpicc -o parallel_quicksort_weak parallel-quicksort-mpi/src/main.c parallel-quicksort-mpi/src/quicksort.c -lm
 
 # Loop over different process counts.
-for np in $(seq 2 2 128); do
+for np in $(seq 96 2 128); do
   # For weak scaling, global data size = np * DATA_SIZE_PER_PROC.
   GLOBAL_DATA_SIZE=$(( np * DATA_SIZE_PER_PROC ))
   for i in {1..10}; do
