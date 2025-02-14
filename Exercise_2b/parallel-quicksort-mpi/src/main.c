@@ -28,10 +28,14 @@ int compare_arrays(double *a, double *b, int n) {
 
 int main(int argc, char **argv) {
     int rank, size;
-    int data_size;  // Global data size
-    int run_serial = 1; // Control flag: 1 to run serial version, 0 to skip.
+    int data_size;           // Global data size
+    int run_serial = 1;      // 1 to run serial version, 0 to skip.
     double *global_data = NULL;
     double *serial_data = NULL;  // Copy for serial sorting
+    double serial_time_result = 0.0; // Will hold serial execution time if run.
+    
+    // Declare the CSV filename outside so it is visible later.
+    char *csv_filename = "timings.csv";  // default filename
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -54,13 +58,12 @@ int main(int argc, char **argv) {
             run_serial = atoi(argv[2]);  // nonzero means true.
         }
         // Third argument: CSV filename (optional).
-        char *csv_filename = "timings.csv";  // default filename
-        if (rank == 0) {
-            if (argc > 3) {
-                csv_filename = argv[3];
-            }
+        if (argc > 3) {
+            csv_filename = argv[3];
         }
+        printf("CSV filename: %s\n", csv_filename);
     }
+
     // Broadcast data_size to all processes.
     MPI_Bcast(&data_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
@@ -105,8 +108,8 @@ int main(int argc, char **argv) {
         // Run serial quicksort, time it, and compare outcomes.
         double start_serial = MPI_Wtime();
         quicksort(serial_data, 0, data_size - 1);
-        double serial_time = MPI_Wtime() - start_serial;
-        printf("Serial quicksort time: %f seconds\n", serial_time);
+        serial_time_result = MPI_Wtime() - start_serial;
+        printf("Serial quicksort time: %f seconds\n", serial_time_result);
         printf("Serial sorted data (first 10 elements):\n");
         for (int i = 0; i < (data_size < 10 ? data_size : 10); i++) {
             printf("%f ", serial_data[i]);
@@ -140,10 +143,7 @@ int main(int argc, char **argv) {
         if (!csv) {
             perror("Error opening CSV file");
         } else {
-            double serial_time = (run_serial) ? 
-                ((double)0) : 0;  // If serial is not run, CSV can have 0 or N/A.
-            // In this case, if not run, nothing to compare so we print 0.
-            fprintf(csv, "%d,%d,%f,%f,%d\n", size, data_size, parallel_time, (run_serial ? serial_time : 0), run_serial);
+            fprintf(csv, "%d,%d,%f,%f,%d\n", size, data_size, parallel_time, (run_serial ? serial_time_result : 0.0), run_serial);
             fclose(csv);
         }
         free(global_data);
