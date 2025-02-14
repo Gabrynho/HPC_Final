@@ -124,7 +124,6 @@ int main(int argc, char **argv) {
 
     // Write results to CSV file on rank 0.
     if (rank == 0) {
-        const char *csv_filename = "timings.csv";
         FILE *csv;
         // Create file with header if it doesn't exist.
         if (access(csv_filename, F_OK) != 0) {
