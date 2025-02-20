@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
     printf("%d,%d,%d,%.6f,%.6f,%.6f,%.6f,%d,%.6f\n", num_threads, n_x, n_y, x_L, y_L, x_R, y_R, I_max, calc_time);
 
     // Optionally, write the image to a PGM file, so it can be viewed later if desired
-    // write_pgm_image(image, maxval, n_x, n_y, "mandelbrot.pgm");
+    write_pgm_image(image, maxval, n_x, n_y, "mandelbrot.pgm");
 
     free(image);
     return EXIT_SUCCESS;

@@ -21,7 +21,7 @@ CSV_OUT="mandelbrot_strong.csv"
 echo "Num_Threads,n_x,n_y,x_L,y_L,x_R,y_R,I_max,Calc_Time" > "${CSV_OUT}"
 
 # Loop over different numbers of OpenMP threads for benchmarking
-for IMAX in 255 65565; do
+for IMAX in 255 65535; do
   for OMP_THREADS in 4 8 16 32 64 128; do
   export OMP_NUM_THREADS=${OMP_THREADS}
   echo "Running with OMP_NUM_THREADS=${OMP_THREADS}"
